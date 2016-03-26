@@ -10,6 +10,7 @@ namespace SampleWebApp.Controllers
     {
         public ActionResult Index()
         {
+            throw new ApplicationException("Test error");
             ViewBag.Title = "Home Page";
 
             return View();
