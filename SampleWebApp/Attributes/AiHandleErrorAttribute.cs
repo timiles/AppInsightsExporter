@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.ApplicationInsights;
 
@@ -16,7 +17,19 @@ namespace SampleWebApp.Attributes
                 {
                     // Note: A single instance of telemetry client is sufficient to track multiple telemetry items.
                     var ai = new TelemetryClient();
-                    ai.TrackException(filterContext.Exception);
+
+                    var properties = new Dictionary<string, string>
+                    {
+                        {"testProperty0", "testValue0"},
+                        {"testProperty1", "testValue1"}
+                    };
+                    var metrics = new Dictionary<string, double>
+                    {
+                        {"testMetric0", -1.2345678},
+                        {"testMetric1", 3.1415926}
+                    };
+
+                    ai.TrackException(filterContext.Exception, properties, metrics);
                 }
             }
             base.OnException(filterContext);
