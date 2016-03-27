@@ -25,12 +25,14 @@ namespace BlobExporter.Tests
             exceptionTelemetry.Message.Should().Be("Test error");
 
             exceptionTelemetry.StackTrace.Should().NotBeNull();
-            exceptionTelemetry.StackTrace.Count().Should().Be(12);
+            exceptionTelemetry.StackTrace.Count().Should().Be(17);
             var topLevel = exceptionTelemetry.StackTrace.First();
-            topLevel.Method.Should().Be("SampleWebApp.Controllers.HomeController.Index");
+            topLevel.Method.Should().Be("SampleWebApp.Controllers.TestErrorController.Index");
             topLevel.Assembly.Should().Be("SampleWebApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            topLevel.FileName.Should().Be(@"c:\Code\AppInsightsExporter\SampleWebApp\Controllers\HomeController.cs");
-            topLevel.LineNumber.Should().Be(13);
+            topLevel.FileName.Should().Be(@"c:\Code\AppInsightsExporter\SampleWebApp\Controllers\TestErrorController.cs");
+            topLevel.LineNumber.Should().Be(10);
+
+            exceptionTelemetry.UserId.Should().Be("test_user");
 
             // properties
             exceptionTelemetry.Properties.Should().ContainKey("testProperty0");

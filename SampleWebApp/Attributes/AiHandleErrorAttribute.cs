@@ -10,13 +10,13 @@ namespace SampleWebApp.Attributes
     {
         public override void OnException(ExceptionContext filterContext)
         {
-            if (filterContext != null && filterContext.HttpContext != null && filterContext.Exception != null)
+            if (filterContext?.HttpContext != null && filterContext.Exception != null)
             {
                 //If customError is Off, then AI HTTPModule will report the exception
                 if (filterContext.HttpContext.IsCustomErrorEnabled)
                 {
-                    // Note: A single instance of telemetry client is sufficient to track multiple telemetry items.
                     var ai = new TelemetryClient();
+                    ai.Context.User.Id = filterContext.HttpContext.User?.Identity?.Name;
 
                     var properties = new Dictionary<string, string>
                     {

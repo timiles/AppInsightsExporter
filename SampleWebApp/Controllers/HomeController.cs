@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace SampleWebApp.Controllers
 {
@@ -10,7 +6,6 @@ namespace SampleWebApp.Controllers
     {
         public ActionResult Index()
         {
-            throw new ApplicationException("Test error");
             ViewBag.Title = "Home Page";
 
             return View();

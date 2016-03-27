@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using BlobExporter.JsonModels.Exception;
 using BlobExporter.Models;
 using Newtonsoft.Json;
@@ -12,7 +11,7 @@ namespace BlobExporter
     {
         public static ExceptionTelemetry Parse(string json)
         {
-            var e = JsonConvert.DeserializeObject<JsonModels.Exception.RootObject>(json);
+            var e = JsonConvert.DeserializeObject<RootObject>(json);
 
             var basicException = e.basicException[0];
             var stackTrace = e.basicException.Last().parsedStack;
@@ -27,6 +26,7 @@ namespace BlobExporter
                     FileName = x.fileName,
                     LineNumber = x.line,
                 }),
+                UserId = e.context.user.anonId,
                 Properties = FlattenDictionary(e.context.custom.dimensions, x => x),
                 Metrics = FlattenDictionary(e.context.custom.metrics, x => x.value)
             };

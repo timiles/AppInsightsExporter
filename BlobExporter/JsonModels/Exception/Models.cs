@@ -74,6 +74,8 @@ namespace BlobExporter.JsonModels.Exception
 
     public class Location
     {
+        public string continent { get; set; }
+        public string country { get; set; }
         public string clientip { get; set; }
         public string province { get; set; }
         public string city { get; set; }
@@ -82,6 +84,7 @@ namespace BlobExporter.JsonModels.Exception
     public class User
     {
         public bool isAuthenticated { get; set; }
+        public string anonId { get; set; }
         public string anonAcquisitionDate { get; set; }
         public string authAcquisitionDate { get; set; }
         public string accountAcquisitionDate { get; set; }
