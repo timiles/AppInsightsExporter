@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "SampleWebApp\SampleWebApp.csproj", "{FA842D53-3171-40CC-8CBB-E2A5E9CBB1D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlobExporter", "BlobExporter\BlobExporter.csproj", "{2C6F0D11-4906-4122-8E36-76E3C09576EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FA842D53-3171-40CC-8CBB-E2A5E9CBB1D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA842D53-3171-40CC-8CBB-E2A5E9CBB1D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA842D53-3171-40CC-8CBB-E2A5E9CBB1D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C6F0D11-4906-4122-8E36-76E3C09576EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C6F0D11-4906-4122-8E36-76E3C09576EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C6F0D11-4906-4122-8E36-76E3C09576EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C6F0D11-4906-4122-8E36-76E3C09576EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
