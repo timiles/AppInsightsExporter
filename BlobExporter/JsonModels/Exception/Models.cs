@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BlobExporter.JsonModels.Exception
 {
@@ -143,7 +144,7 @@ namespace BlobExporter.JsonModels.Exception
         {
             public bool isSynthetic { get; set; }
             public double samplingRate { get; set; }
-            public string eventTime { get; set; }
+            public DateTimeOffset eventTime { get; set; }
         }
     }
 

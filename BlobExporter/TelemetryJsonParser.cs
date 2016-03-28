@@ -18,6 +18,7 @@ namespace BlobExporter
 
             return new ExceptionTelemetry
             {
+                EventTime = e.context.data.eventTime,
                 Message = basicException.innermostExceptionMessage,
                 StackTrace = stackTrace.Select(x => new StackTraceLevel
                 {

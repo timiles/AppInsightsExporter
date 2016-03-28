@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using BlobExporter.Models;
+﻿using System;
+using System.Linq;
 using BlobExporter.Tests.Helpers;
 using FluentAssertions;
 using Xunit;
@@ -21,6 +21,8 @@ namespace BlobExporter.Tests
         {
             var exceptionTelemetry = TelemetryJsonParser.Parse(this._json);
             exceptionTelemetry.Should().NotBeNull();
+
+            exceptionTelemetry.EventTime.Should().Be(DateTime.Parse("2016-03-27T21:09:45.3540931Z"));
 
             exceptionTelemetry.Message.Should().Be("Test error");
 

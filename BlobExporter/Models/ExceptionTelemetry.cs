@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BlobExporter.Models
 {
     public class ExceptionTelemetry
     {
+        public DateTimeOffset EventTime { get; set; }
+
         public string Message { get; set; }
 
         public IEnumerable<StackTraceLevel> StackTrace { get; set; }
