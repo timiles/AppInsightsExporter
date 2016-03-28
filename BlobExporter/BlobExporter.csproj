@@ -70,8 +70,10 @@
   <ItemGroup>
     <Compile Include="BlobExporterClient.cs" />
     <Compile Include="BlobStorageDownloader.cs" />
+    <Compile Include="IRunTracker.cs" />
     <Compile Include="JsonModels\Exception\Models.cs" />
     <Compile Include="Models\ExceptionTelemetry.cs" />
+    <Compile Include="Models\BlobInfo.cs" />
     <Compile Include="Models\StackTraceLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TelemetryJsonParser.cs" />

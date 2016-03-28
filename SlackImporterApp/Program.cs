@@ -13,13 +13,14 @@ namespace SlackImporterApp
             var blobStorageContainerName = ConfigurationManager.AppSettings["BlobStorageContainerName"];
             var appName = ConfigurationManager.AppSettings["AppName"];
             var instrumentationKey = Guid.Parse(ConfigurationManager.AppSettings["InstrumentationKey"]);
+            var slackWebhookUrl = ConfigurationManager.AppSettings["SlackWebhookUrl"];
+
 
             var blobClient = new BlobExporterClient(storageConnectionString, blobStorageContainerName, appName,
-                instrumentationKey);
+                instrumentationKey, new RunTracker());
 
-            var exceptions = blobClient.ReadExceptionsSince(DateTime.UtcNow.AddHours(-5));
+            var exceptions = blobClient.ReadLatestExceptions();
 
-            var slackWebhookUrl = ConfigurationManager.AppSettings["SlackWebhookUrl"];
             var slackClient = new SlackClient(slackWebhookUrl);
 
             foreach (var e in exceptions)

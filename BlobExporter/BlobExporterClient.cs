@@ -6,36 +6,48 @@ namespace BlobExporter
 {
     public class BlobExporterClient
     {
-        private readonly string _storageConnectionString;
-        private readonly string _blobStorageContainerName;
-        private readonly string _appName;
-        private readonly Guid _instrumentationKey;
+        private readonly IRunTracker _runTracker;
+        private readonly BlobStorageDownloader _blobStorageDownloader;
 
         public BlobExporterClient(
             string storageConnectionString,
             string blobStorageContainerName,
             string appName,
-            Guid instrumentationKey)
+            Guid instrumentationKey,
+            IRunTracker runTracker)
         {
-            _storageConnectionString = storageConnectionString;
-            _blobStorageContainerName = blobStorageContainerName;
-            _appName = appName;
-            _instrumentationKey = instrumentationKey;
+            _blobStorageDownloader = new BlobStorageDownloader(
+                storageConnectionString,
+                blobStorageContainerName,
+                appName,
+                instrumentationKey);
+
+            _runTracker = runTracker;
         }
 
-        public IEnumerable<ExceptionTelemetry> ReadExceptionsSince(DateTime sinceUtcDateTime)
+        public IEnumerable<ExceptionTelemetry> ReadLatestExceptions()
         {
-            var downloader = new BlobStorageDownloader(_storageConnectionString, _blobStorageContainerName, _appName,
-                _instrumentationKey);
-            var exceptionsBlobContent = downloader.DownloadExceptionsSince(sinceUtcDateTime);
+            var exceptionBlobs = this._blobStorageDownloader.DownloadExceptionsSince(this._runTracker.LastRunDateTime);
 
-            foreach (var blobContent in exceptionsBlobContent)
+            // Use LastModified date to track when last run
+            var lastModified = DateTimeOffset.MinValue;
+            foreach (var blob in exceptionBlobs)
             {
+                if (blob.LastModified.HasValue && blob.LastModified.Value > lastModified)
+                {
+                    lastModified = blob.LastModified.Value;
+                }
+
                 // valid to have multiple json objects in one blob file
-                foreach (var json in blobContent.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (var json in blob.Content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     yield return TelemetryJsonParser.Parse(json);
                 }
+            }
+
+            if (lastModified > DateTimeOffset.MinValue)
+            {
+                this._runTracker.LastRunDateTime = lastModified;
             }
         }
     }

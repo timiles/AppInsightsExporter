@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using BlobExporter.Models;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -26,7 +27,7 @@ namespace BlobExporter
             _instrumentationKey = instrumentationKey.ToString().Replace("-", "").ToLower();
         }
 
-        public IEnumerable<string> DownloadExceptionsSince(DateTime sinceUtcDateTime)
+        public IEnumerable<BlobInfo> DownloadExceptionsSince(DateTimeOffset sinceUtcDateTime)
         {
             var storageAccount = CloudStorageAccount.Parse(_connectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
@@ -42,21 +43,27 @@ namespace BlobExporter
                 foreach (var blob in containerReference.ListBlobs(prefix, useFlatBlobListing: true))
                 {
                     // should all be CloudBlockBlobs, since we've used flat blot listing.
-                    if (blob is CloudBlockBlob && ((CloudBlockBlob) blob).Properties.LastModified > sinceUtcDateTime)
+                    var cloudBlockBlob = blob as CloudBlockBlob;
+                    if (cloudBlockBlob != null && cloudBlockBlob.Properties.LastModified > sinceUtcDateTime)
                     {
-                        yield return DownloadBlob(blobClient, blob);
+                        yield return DownloadBlob(blobClient, cloudBlockBlob);
                     }
                 }
             }
         }
 
-        private static string DownloadBlob(CloudBlobClient blobClient, IListBlobItem blob)
+        private static BlobInfo DownloadBlob(CloudBlobClient blobClient, CloudBlockBlob blob)
         {
             var cloudBlockBlob = blobClient.GetBlobReferenceFromServer(blob.Uri);
             using (var memoryStream = new MemoryStream())
             {
                 cloudBlockBlob.DownloadToStream(memoryStream);
-                return Encoding.UTF8.GetString(memoryStream.ToArray());
+                var content  = Encoding.UTF8.GetString(memoryStream.ToArray());
+                return new BlobInfo
+                {
+                    LastModified = blob.Properties.LastModified,
+                    Content = content
+                };
             }
         }
     }
