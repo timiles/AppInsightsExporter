@@ -1,5 +1,4 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using BlobExporter;
 using SlackImporter;
 
@@ -9,18 +8,11 @@ namespace SlackImporterApp
     {
         static void Main(string[] args)
         {
-            var storageConnectionString = ConfigurationManager.AppSettings["StorageConnectionString"];
-            var blobStorageContainerName = ConfigurationManager.AppSettings["BlobStorageContainerName"];
-            var appName = ConfigurationManager.AppSettings["AppName"];
-            var instrumentationKey = Guid.Parse(ConfigurationManager.AppSettings["InstrumentationKey"]);
-            var slackWebhookUrl = ConfigurationManager.AppSettings["SlackWebhookUrl"];
-
-
-            var blobClient = new BlobExporterClient(storageConnectionString, blobStorageContainerName, appName,
-                instrumentationKey, new RunTracker());
+            var blobClient = new BlobExporterClient(new StorageConfiguration(), new RunTracker());
 
             var exceptions = blobClient.ReadLatestExceptions();
 
+            var slackWebhookUrl = ConfigurationManager.AppSettings["SlackWebhookUrl"];
             var slackClient = new SlackClient(slackWebhookUrl);
 
             foreach (var e in exceptions)

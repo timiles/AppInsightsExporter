@@ -4,7 +4,7 @@ using BlobExporter;
 
 namespace SlackImporterApp
 {
-    internal class RunTracker : IRunTracker
+    class RunTracker : IRunTracker
     {
         private const string LastRunFileName = @"_lastrun.txt";
 

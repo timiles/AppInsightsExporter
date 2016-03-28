@@ -6,21 +6,16 @@ namespace BlobExporter
 {
     public class BlobExporterClient
     {
-        private readonly IRunTracker _runTracker;
         private readonly BlobStorageDownloader _blobStorageDownloader;
+        private readonly IRunTracker _runTracker;
 
-        public BlobExporterClient(
-            string storageConnectionString,
-            string blobStorageContainerName,
-            string appName,
-            Guid instrumentationKey,
-            IRunTracker runTracker)
+        public BlobExporterClient(IStorageConfiguration storageConfiguration, IRunTracker runTracker)
         {
             _blobStorageDownloader = new BlobStorageDownloader(
-                storageConnectionString,
-                blobStorageContainerName,
-                appName,
-                instrumentationKey);
+                storageConfiguration.StorageConnectionString,
+                storageConfiguration.BlobStorageContainerName,
+                storageConfiguration.AppName,
+                storageConfiguration.InstrumentationKey);
 
             _runTracker = runTracker;
         }
