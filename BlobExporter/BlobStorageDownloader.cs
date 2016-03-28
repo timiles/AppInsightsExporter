@@ -32,14 +32,20 @@ namespace BlobExporter
             var blobClient = storageAccount.CreateCloudBlobClient();
             var containerReference = blobClient.GetContainerReference(_containerName);
 
-            // use flat blob listing to reduce calls to API
-            var prefix =
-                $@"{this._appName}_{this._instrumentationKey}/Exceptions/{sinceUtcDateTime.ToString("yyyy-MM-dd")}/";
-            foreach (var blob in containerReference.ListBlobs(prefix, useFlatBlobListing: true))
+            for (var listBlobsCreatedOnDate = sinceUtcDateTime.Date;
+                listBlobsCreatedOnDate <= DateTime.UtcNow.Date;
+                listBlobsCreatedOnDate = listBlobsCreatedOnDate.AddDays(1))
             {
-                if (blob is CloudBlockBlob && ((CloudBlockBlob)blob).Properties.LastModified > sinceUtcDateTime)
+                var prefix =
+                    $@"{this._appName}_{this._instrumentationKey}/Exceptions/{listBlobsCreatedOnDate.ToString("yyyy-MM-dd")}/";
+                // use flat blob listing to reduce calls to API
+                foreach (var blob in containerReference.ListBlobs(prefix, useFlatBlobListing: true))
                 {
-                    yield return DownloadBlob(blobClient, blob);
+                    // should all be CloudBlockBlobs, since we've used flat blot listing.
+                    if (blob is CloudBlockBlob && ((CloudBlockBlob) blob).Properties.LastModified > sinceUtcDateTime)
+                    {
+                        yield return DownloadBlob(blobClient, blob);
+                    }
                 }
             }
         }
