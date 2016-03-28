@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.WindowsAzure.Storage;
@@ -7,27 +7,40 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace BlobExporter
 {
-    public class BlobStorageDownloader
+    internal class BlobStorageDownloader
     {
-        private readonly string _containerName;
         private readonly string _connectionString;
+        private readonly string _containerName;
+        private readonly string _appName;
+        private readonly string _instrumentationKey;
 
-        public BlobStorageDownloader(string containerName)
+        public BlobStorageDownloader(
+            string connectionString,
+            string containerName,
+            string appName,
+            Guid instrumentationKey)
         {
-            _containerName = containerName;
-            _connectionString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            _connectionString = connectionString;
+            _containerName = containerName.ToLower();
+            _appName = appName.ToLower();
+            _instrumentationKey = instrumentationKey.ToString().Replace("-", "").ToLower();
         }
 
-        public IEnumerable<string> Import()
+        public IEnumerable<string> DownloadExceptionsSince(DateTime sinceUtcDateTime)
         {
             var storageAccount = CloudStorageAccount.Parse(_connectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var containerReference = blobClient.GetContainerReference(_containerName);
 
             // use flat blob listing to reduce calls to API
-            foreach (var blob in containerReference.ListBlobs(useFlatBlobListing: true))
+            var prefix =
+                $@"{this._appName}_{this._instrumentationKey}/Exceptions/{sinceUtcDateTime.ToString("yyyy-MM-dd")}/{sinceUtcDateTime.Hour.ToString("00")}";
+            foreach (var blob in containerReference.ListBlobs(prefix, useFlatBlobListing: true))
             {
-                yield return DownloadBlob(blobClient, blob);
+                if (blob is CloudBlockBlob && ((CloudBlockBlob)blob).Properties.LastModified > sinceUtcDateTime)
+                {
+                    yield return DownloadBlob(blobClient, blob);
+                }
             }
         }
 

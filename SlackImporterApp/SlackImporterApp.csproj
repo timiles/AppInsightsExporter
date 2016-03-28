@@ -49,8 +49,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="App.private.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlobExporter\BlobExporter.csproj">
+      <Project>{2C6F0D11-4906-4122-8E36-76E3C09576EA}</Project>
+      <Name>BlobExporter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SlackImporter\SlackImporter.csproj">
       <Project>{95148825-F5DC-4F01-9DC5-C1A1154140C6}</Project>
       <Name>SlackImporter</Name>
