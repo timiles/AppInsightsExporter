@@ -34,7 +34,7 @@ namespace BlobExporter
 
             // use flat blob listing to reduce calls to API
             var prefix =
-                $@"{this._appName}_{this._instrumentationKey}/Exceptions/{sinceUtcDateTime.ToString("yyyy-MM-dd")}/{sinceUtcDateTime.Hour.ToString("00")}";
+                $@"{this._appName}_{this._instrumentationKey}/Exceptions/{sinceUtcDateTime.ToString("yyyy-MM-dd")}/";
             foreach (var blob in containerReference.ListBlobs(prefix, useFlatBlobListing: true))
             {
                 if (blob is CloudBlockBlob && ((CloudBlockBlob)blob).Properties.LastModified > sinceUtcDateTime)

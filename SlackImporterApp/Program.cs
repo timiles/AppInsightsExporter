@@ -17,14 +17,14 @@ namespace SlackImporterApp
             var blobClient = new BlobExporterClient(storageConnectionString, blobStorageContainerName, appName,
                 instrumentationKey);
 
-            var exceptions = blobClient.ReadExceptionsSince(DateTime.UtcNow.AddHours(-3));
+            var exceptions = blobClient.ReadExceptionsSince(DateTime.UtcNow.AddHours(-5));
 
             var slackWebhookUrl = ConfigurationManager.AppSettings["SlackWebhookUrl"];
             var slackClient = new SlackClient(slackWebhookUrl);
 
             foreach (var e in exceptions)
             {
-                slackClient.PostMessage(e.Message);
+                slackClient.PostMessage($"{e.EventTime.ToString("F")}: {e.Message}");
             }
         }
     }
