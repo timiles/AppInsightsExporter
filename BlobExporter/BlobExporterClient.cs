@@ -27,12 +27,16 @@ namespace BlobExporter
         {
             var downloader = new BlobStorageDownloader(_storageConnectionString, _blobStorageContainerName, _appName,
                 _instrumentationKey);
-            var exceptionsJsons = downloader.DownloadExceptionsSince(sinceUtcDateTime);
+            var exceptionsBlobContent = downloader.DownloadExceptionsSince(sinceUtcDateTime);
 
-            foreach (var json in exceptionsJsons)
+            foreach (var blobContent in exceptionsBlobContent)
             {
-                yield return TelemetryJsonParser.Parse(json);
+                // valid to have multiple json objects in one blob file
+                foreach (var json in blobContent.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    yield return TelemetryJsonParser.Parse(json);
+                }
             }
-        } 
+        }
     }
 }
