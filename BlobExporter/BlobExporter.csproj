@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="BlobExporterClient.cs" />
     <Compile Include="BlobStorageDownloader.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IRunTracker.cs" />
     <Compile Include="IStorageConfiguration.cs" />
     <Compile Include="JsonModels\Exception\Models.cs" />
