@@ -16,5 +16,7 @@ namespace BlobExporter.Models
         public IDictionary<string, string> Properties { get; set; }
 
         public IDictionary<string, double> Metrics { get; set; }
+
+        public BlobInfo OriginalBlobInfo { get; set; }
     }
 }

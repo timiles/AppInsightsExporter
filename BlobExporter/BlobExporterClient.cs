@@ -36,7 +36,9 @@ namespace BlobExporter
                 // valid to have multiple json objects in one blob file
                 foreach (var json in blob.Content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    yield return TelemetryJsonParser.Parse(json);
+                    var exceptionTelemetry = TelemetryJsonParser.Parse(json);
+                    exceptionTelemetry.OriginalBlobInfo = blob;
+                    yield return exceptionTelemetry;
                 }
             }
 

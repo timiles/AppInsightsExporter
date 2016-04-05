@@ -61,6 +61,7 @@ namespace BlobExporter
                 var content  = Encoding.UTF8.GetString(memoryStream.ToArray());
                 return new BlobInfo
                 {
+                    Path = blob.Uri.LocalPath,
                     LastModified = blob.Properties.LastModified,
                     Content = content
                 };
