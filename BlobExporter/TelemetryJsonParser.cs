@@ -14,13 +14,13 @@ namespace BlobExporter
             var e = JsonConvert.DeserializeObject<RootObject>(json);
 
             var basicException = e.basicException[0];
-            var stackTrace = e.basicException.Last().parsedStack;
+            var stackTrace = e.basicException.FirstOrDefault(x => x.parsedStack != null)?.parsedStack;
 
             return new ExceptionTelemetry
             {
                 EventTime = e.context.data.eventTime,
-                Message = basicException.innermostExceptionMessage,
-                StackTrace = stackTrace.Select(x => new StackTraceLevel
+                Message = basicException.outerExceptionMessage,
+                StackTrace = stackTrace?.Select(x => new StackTraceLevel
                 {
                     Method = x.method,
                     Assembly = x.assembly,
