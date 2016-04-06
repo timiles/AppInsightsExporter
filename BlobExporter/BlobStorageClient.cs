@@ -18,12 +18,12 @@ namespace BlobExporter
         internal BlobStorageClient(
             string connectionString,
             string containerName,
-            string appName,
+            string appInsightsName,
             Guid instrumentationKey)
         {
             _storageAccount = CloudStorageAccount.Parse(connectionString);
             _containerName = containerName.ToLower();
-            _blobNamePrefix = $@"{appName.ToLower()}_{instrumentationKey.ToString().Replace("-", "").ToLower()}/Exceptions/";
+            _blobNamePrefix = $@"{appInsightsName.ToLower()}_{instrumentationKey.ToString().Replace("-", "").ToLower()}/Exceptions/";
         }
 
         internal IEnumerable<BlobInfo> DownloadExceptionsSince(DateTimeOffset sinceUtcDateTime)

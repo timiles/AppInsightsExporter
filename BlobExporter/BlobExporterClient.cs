@@ -15,7 +15,7 @@ namespace BlobExporter
             _blobStorageClient = new BlobStorageClient(
                 storageConfiguration.StorageConnectionString,
                 storageConfiguration.BlobStorageContainerName,
-                storageConfiguration.AppName,
+                storageConfiguration.AppInsightsName,
                 storageConfiguration.InstrumentationKey);
 
             _runTracker = runTracker;

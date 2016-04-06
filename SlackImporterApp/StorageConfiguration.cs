@@ -10,7 +10,7 @@ namespace SlackImporterApp
 
         public string BlobStorageContainerName => ConfigurationManager.AppSettings["BlobStorageContainerName"];
 
-        public string AppName => ConfigurationManager.AppSettings["AppName"];
+        public string AppInsightsName => ConfigurationManager.AppSettings["AppInsightsName"];
 
         public Guid InstrumentationKey => Guid.Parse(ConfigurationManager.AppSettings["InstrumentationKey"]);
     }

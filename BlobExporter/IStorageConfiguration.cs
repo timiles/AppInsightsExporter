@@ -8,7 +8,7 @@ namespace BlobExporter
 
         string BlobStorageContainerName { get; }
 
-        string AppName { get; }
+        string AppInsightsName { get; }
 
         Guid InstrumentationKey { get; }
     }
