@@ -5,6 +5,7 @@ using System.Text;
 using BlobExporter.Models;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using System.Linq;
 
 namespace BlobExporter
 {
@@ -12,8 +13,7 @@ namespace BlobExporter
     {
         private CloudStorageAccount _storageAccount;
         private readonly string _containerName;
-        private readonly string _appName;
-        private readonly string _instrumentationKey;
+        private readonly string _blobNamePrefix;
 
         internal BlobStorageClient(
             string connectionString,
@@ -23,8 +23,7 @@ namespace BlobExporter
         {
             _storageAccount = CloudStorageAccount.Parse(connectionString);
             _containerName = containerName.ToLower();
-            _appName = appName.ToLower();
-            _instrumentationKey = instrumentationKey.ToString().Replace("-", "").ToLower();
+            _blobNamePrefix = $@"{appName.ToLower()}_{instrumentationKey.ToString().Replace("-", "").ToLower()}/Exceptions/";
         }
 
         internal IEnumerable<BlobInfo> DownloadExceptionsSince(DateTimeOffset sinceUtcDateTime)
@@ -36,17 +35,17 @@ namespace BlobExporter
                 listBlobsCreatedOnDate <= DateTime.UtcNow.Date;
                 listBlobsCreatedOnDate = listBlobsCreatedOnDate.AddDays(1))
             {
-                var prefix =
-                    $@"{this._appName}_{this._instrumentationKey}/Exceptions/{listBlobsCreatedOnDate.ToString("yyyy-MM-dd")}/";
-                // use flat blob listing to reduce calls to API
-                foreach (var blob in containerReference.ListBlobs(prefix, useFlatBlobListing: true))
+                var blobNamePrefixForDate = _blobNamePrefix + listBlobsCreatedOnDate.ToString("yyyy-MM-dd");
+
+                // use flat blob listing to reduce calls to API: should all be CloudBlockBlob
+                var blobs = containerReference.ListBlobs(blobNamePrefixForDate, useFlatBlobListing: true)
+                    .OfType<CloudBlockBlob>()
+                    .Where(x => x.Properties.LastModified > sinceUtcDateTime)
+                    .OrderBy(x => x.Properties.LastModified);
+
+                foreach (var blob in blobs)
                 {
-                    // should all be CloudBlockBlobs, since we've used flat blot listing.
-                    var cloudBlockBlob = blob as CloudBlockBlob;
-                    if (cloudBlockBlob != null && cloudBlockBlob.Properties.LastModified > sinceUtcDateTime)
-                    {
-                        yield return DownloadBlob(blobClient, cloudBlockBlob);
-                    }
+                    yield return DownloadBlob(blobClient, blob);
                 }
             }
         }
