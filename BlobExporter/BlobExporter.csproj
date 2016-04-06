@@ -74,6 +74,7 @@
     <Compile Include="IRunTracker.cs" />
     <Compile Include="IStorageConfiguration.cs" />
     <Compile Include="JsonModels\Exception\Models.cs" />
+    <Compile Include="Models\ExceptionBatch.cs" />
     <Compile Include="Models\ExceptionInfo.cs" />
     <Compile Include="Models\BlobInfo.cs" />
     <Compile Include="Models\StackTraceLevel.cs" />

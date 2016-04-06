@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BlobExporter.Models;
+using System.Linq;
 
 namespace BlobExporter
 {
@@ -20,7 +21,7 @@ namespace BlobExporter
             _runTracker = runTracker;
         }
 
-        public IEnumerable<ExceptionInfo> ReadLatestExceptions()
+        public IEnumerable<ExceptionBatch> ReadLatestExceptions()
         {
             var exceptionBlobs = this._blobStorageClient.DownloadExceptionsSince(this._runTracker.LastRunDateTime);
 
@@ -34,12 +35,12 @@ namespace BlobExporter
                 }
 
                 // valid to have multiple json objects in one blob file
-                foreach (var json in blob.Content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                var lines = blob.Content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                yield return new ExceptionBatch
                 {
-                    var exceptionTelemetry = ExceptionInfoJsonParser.Parse(json);
-                    exceptionTelemetry.OriginalBlobInfo = blob;
-                    yield return exceptionTelemetry;
-                }
+                    ExceptionInfos = lines.Select(ExceptionInfoJsonParser.Parse).OrderBy(x => x.EventTime),
+                    OriginalBlobInfo = blob,
+                };
             }
 
             if (lastModified > DateTimeOffset.MinValue)

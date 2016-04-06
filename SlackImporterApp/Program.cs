@@ -15,22 +15,24 @@ namespace SlackImporterApp
         {
             var blobClient = new BlobExporterClient(new StorageConfiguration(), new RunTracker());
 
-            var exceptions = blobClient.ReadLatestExceptions();
+            var batchedExceptions = blobClient.ReadLatestExceptions();
 
             var slackWebhookUrl = ConfigurationManager.AppSettings["SlackWebhookUrl"];
             var slackClient = new SlackClient(slackWebhookUrl);
 
-            foreach (var e in exceptions)
+            foreach (var batch in batchedExceptions)
             {
-                slackClient.PostMessage($"{e.EventTime.ToString("F")} UTC: `{e.Message}` ```{e.StackTrace.ToFriendlyString()}```");
+                foreach (var e in batch.ExceptionInfos)
+                {
+                    slackClient.PostMessage($"{e.EventTime.ToString("F")} UTC: `{e.Message}` ```{e.StackTrace.ToFriendlyString()}```");
+                    Console.WriteLine($"{e.EventTime.ToString("F")} UTC: {e.Message}");
+                }
 
-                Console.WriteLine($"{e.EventTime.ToString("F")} UTC: {e.Message}");
-
-                StoreOriginalBlobInfo(e.OriginalBlobInfo);
+                StoreOriginalBlobInfo(batch.OriginalBlobInfo);
 
                 if (DeleteBlobsOnceImported)
                 {
-                    blobClient.Delete(e.OriginalBlobInfo.Path);
+                    blobClient.Delete(batch.OriginalBlobInfo.Path);
                 }
             }
         }
