@@ -7,16 +7,16 @@ using Newtonsoft.Json;
 
 namespace BlobExporter
 {
-    internal static class TelemetryJsonParser
+    internal static class ExceptionInfoJsonParser
     {
-        public static ExceptionTelemetry Parse(string json)
+        public static ExceptionInfo Parse(string json)
         {
             var e = JsonConvert.DeserializeObject<RootObject>(json);
 
             var basicException = e.basicException[0];
             var stackTrace = e.basicException.FirstOrDefault(x => x.parsedStack != null)?.parsedStack;
 
-            return new ExceptionTelemetry
+            return new ExceptionInfo
             {
                 EventTime = e.context.data.eventTime,
                 Message = basicException.outerExceptionMessage,

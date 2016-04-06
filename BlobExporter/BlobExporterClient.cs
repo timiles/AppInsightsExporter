@@ -20,7 +20,7 @@ namespace BlobExporter
             _runTracker = runTracker;
         }
 
-        public IEnumerable<ExceptionTelemetry> ReadLatestExceptions()
+        public IEnumerable<ExceptionInfo> ReadLatestExceptions()
         {
             var exceptionBlobs = this._blobStorageClient.DownloadExceptionsSince(this._runTracker.LastRunDateTime);
 
@@ -36,7 +36,7 @@ namespace BlobExporter
                 // valid to have multiple json objects in one blob file
                 foreach (var json in blob.Content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    var exceptionTelemetry = TelemetryJsonParser.Parse(json);
+                    var exceptionTelemetry = ExceptionInfoJsonParser.Parse(json);
                     exceptionTelemetry.OriginalBlobInfo = blob;
                     yield return exceptionTelemetry;
                 }

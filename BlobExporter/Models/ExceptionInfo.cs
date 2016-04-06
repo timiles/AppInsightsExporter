@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlobExporter.Models
 {
-    public class ExceptionTelemetry
+    public class ExceptionInfo
     {
         public DateTimeOffset EventTime { get; set; }
 

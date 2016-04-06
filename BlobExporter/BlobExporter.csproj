@@ -74,11 +74,11 @@
     <Compile Include="IRunTracker.cs" />
     <Compile Include="IStorageConfiguration.cs" />
     <Compile Include="JsonModels\Exception\Models.cs" />
-    <Compile Include="Models\ExceptionTelemetry.cs" />
+    <Compile Include="Models\ExceptionInfo.cs" />
     <Compile Include="Models\BlobInfo.cs" />
     <Compile Include="Models\StackTraceLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TelemetryJsonParser.cs" />
+    <Compile Include="ExceptionInfoJsonParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

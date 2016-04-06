@@ -19,36 +19,36 @@ namespace BlobExporter.Tests
         [Fact]
         public void WhenParsed_ThenObjectPropertiesAsExpected()
         {
-            var exceptionTelemetry = TelemetryJsonParser.Parse(this._json);
-            exceptionTelemetry.Should().NotBeNull();
+            var exceptionInfo = ExceptionInfoJsonParser.Parse(this._json);
+            exceptionInfo.Should().NotBeNull();
 
-            exceptionTelemetry.EventTime.Should().Be(DateTime.Parse("2016-03-27T21:09:45.3540931Z"));
+            exceptionInfo.EventTime.Should().Be(DateTime.Parse("2016-03-27T21:09:45.3540931Z"));
 
-            exceptionTelemetry.Message.Should().Be("Test error");
+            exceptionInfo.Message.Should().Be("Test error");
 
-            exceptionTelemetry.StackTrace.Should().NotBeNull();
-            exceptionTelemetry.StackTrace.Count().Should().Be(17);
-            var topLevel = exceptionTelemetry.StackTrace.First();
+            exceptionInfo.StackTrace.Should().NotBeNull();
+            exceptionInfo.StackTrace.Count().Should().Be(17);
+            var topLevel = exceptionInfo.StackTrace.First();
             topLevel.Method.Should().Be("SampleWebApp.Controllers.TestErrorController.Index");
             topLevel.Assembly.Should().Be("SampleWebApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             topLevel.FileName.Should().Be(@"c:\Code\AppInsightsExporter\SampleWebApp\Controllers\TestErrorController.cs");
             topLevel.LineNumber.Should().Be(10);
 
-            exceptionTelemetry.UserId.Should().Be("test_user");
+            exceptionInfo.UserId.Should().Be("test_user");
 
             // properties
-            exceptionTelemetry.Properties.Should().ContainKey("testProperty0");
-            exceptionTelemetry.Properties["testProperty0"].Should().Be("testValue0");
+            exceptionInfo.Properties.Should().ContainKey("testProperty0");
+            exceptionInfo.Properties["testProperty0"].Should().Be("testValue0");
 
-            exceptionTelemetry.Properties.Should().ContainKey("testProperty1");
-            exceptionTelemetry.Properties["testProperty1"].Should().Be("testValue1");
+            exceptionInfo.Properties.Should().ContainKey("testProperty1");
+            exceptionInfo.Properties["testProperty1"].Should().Be("testValue1");
 
             // metrics
-            exceptionTelemetry.Metrics.Should().ContainKey("testMetric0");
-            exceptionTelemetry.Metrics["testMetric0"].Should().Be(-1.2345678);
+            exceptionInfo.Metrics.Should().ContainKey("testMetric0");
+            exceptionInfo.Metrics["testMetric0"].Should().Be(-1.2345678);
 
-            exceptionTelemetry.Metrics.Should().ContainKey("testMetric1");
-            exceptionTelemetry.Metrics["testMetric1"].Should().Be(3.1415926);
+            exceptionInfo.Metrics.Should().ContainKey("testMetric1");
+            exceptionInfo.Metrics["testMetric1"].Should().Be(3.1415926);
         }
     }
 }
