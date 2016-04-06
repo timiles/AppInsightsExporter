@@ -6,12 +6,12 @@ namespace BlobExporter
 {
     public class BlobExporterClient
     {
-        private readonly BlobStorageDownloader _blobStorageDownloader;
+        private readonly BlobStorageClient _blobStorageClient;
         private readonly IRunTracker _runTracker;
 
         public BlobExporterClient(IStorageConfiguration storageConfiguration, IRunTracker runTracker)
         {
-            _blobStorageDownloader = new BlobStorageDownloader(
+            _blobStorageClient = new BlobStorageClient(
                 storageConfiguration.StorageConnectionString,
                 storageConfiguration.BlobStorageContainerName,
                 storageConfiguration.AppName,
@@ -22,7 +22,7 @@ namespace BlobExporter
 
         public IEnumerable<ExceptionTelemetry> ReadLatestExceptions()
         {
-            var exceptionBlobs = this._blobStorageDownloader.DownloadExceptionsSince(this._runTracker.LastRunDateTime);
+            var exceptionBlobs = this._blobStorageClient.DownloadExceptionsSince(this._runTracker.LastRunDateTime);
 
             // Use LastModified date to track when last run
             var lastModified = DateTimeOffset.MinValue;
@@ -46,6 +46,11 @@ namespace BlobExporter
             {
                 this._runTracker.LastRunDateTime = lastModified;
             }
+        }
+
+        public void Delete(string path)
+        {
+            this._blobStorageClient.DeleteBlob(path);
         }
     }
 }

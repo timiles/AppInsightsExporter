@@ -69,7 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlobExporterClient.cs" />
-    <Compile Include="BlobStorageDownloader.cs" />
+    <Compile Include="BlobStorageClient.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IRunTracker.cs" />
     <Compile Include="IStorageConfiguration.cs" />

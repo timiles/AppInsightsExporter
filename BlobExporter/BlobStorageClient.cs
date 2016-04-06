@@ -8,29 +8,28 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace BlobExporter
 {
-    internal class BlobStorageDownloader
+    internal class BlobStorageClient
     {
-        private readonly string _connectionString;
+        private CloudStorageAccount _storageAccount;
         private readonly string _containerName;
         private readonly string _appName;
         private readonly string _instrumentationKey;
 
-        public BlobStorageDownloader(
+        internal BlobStorageClient(
             string connectionString,
             string containerName,
             string appName,
             Guid instrumentationKey)
         {
-            _connectionString = connectionString;
+            _storageAccount = CloudStorageAccount.Parse(connectionString);
             _containerName = containerName.ToLower();
             _appName = appName.ToLower();
             _instrumentationKey = instrumentationKey.ToString().Replace("-", "").ToLower();
         }
 
-        public IEnumerable<BlobInfo> DownloadExceptionsSince(DateTimeOffset sinceUtcDateTime)
+        internal IEnumerable<BlobInfo> DownloadExceptionsSince(DateTimeOffset sinceUtcDateTime)
         {
-            var storageAccount = CloudStorageAccount.Parse(_connectionString);
-            var blobClient = storageAccount.CreateCloudBlobClient();
+            var blobClient = _storageAccount.CreateCloudBlobClient();
             var containerReference = blobClient.GetContainerReference(_containerName);
 
             for (var listBlobsCreatedOnDate = sinceUtcDateTime.Date;
@@ -66,6 +65,22 @@ namespace BlobExporter
                     Content = content
                 };
             }
+        }
+
+        internal void DeleteBlob(string path)
+        {
+            var containerPrefix = '/' + _containerName + '/';
+            if (!path.StartsWith(containerPrefix))
+            {
+                throw new ArgumentException($"Path should be reference to a blob in container \"{_containerName}\"");
+            }
+
+            var blobName = path.Substring(containerPrefix.Length);
+
+            var blobClient = _storageAccount.CreateCloudBlobClient();
+            var containerReference = blobClient.GetContainerReference(_containerName);
+            var blob = containerReference.GetBlockBlobReference(blobName);
+            blob.DeleteIfExists();
         }
     }
 }
