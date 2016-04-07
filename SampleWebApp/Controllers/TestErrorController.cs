@@ -7,7 +7,16 @@ namespace SampleWebApp.Controllers
     {
         public ActionResult Index()
         {
-            throw new ApplicationException("Test error");
+            try
+            {
+                int remainder;
+                int quotient = Math.DivRem(1, 0, out remainder);
+                return Content("Should have thrown an exception by here");
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Test error", ex);
+            }
         }
     }
 }

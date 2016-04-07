@@ -6,10 +6,8 @@ namespace BlobExporter.Models
     public class ExceptionInfo
     {
         public DateTimeOffset EventTime { get; set; }
-
-        public string Message { get; set; }
-
-        public IEnumerable<StackTraceLevel> StackTrace { get; set; }
+        
+        public IEnumerable<ExceptionStack> ExceptionStacks { get; set; }
 
         public string UserId { get; set; }
 

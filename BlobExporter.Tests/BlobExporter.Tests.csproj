@@ -67,7 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GivenExceptionJson.cs" />
+    <Compile Include="ExceptionParsingTests.cs" />
     <Compile Include="Helpers\SampleReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -75,6 +75,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Samples\Exception.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\ExceptionWithInnerException.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
