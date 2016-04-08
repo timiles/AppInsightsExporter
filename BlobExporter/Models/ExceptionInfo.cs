@@ -5,6 +5,8 @@ namespace BlobExporter.Models
 {
     public class ExceptionInfo
     {
+        public string Operation { get; internal set; }
+
         public DateTimeOffset EventTime { get; set; }
         
         public IEnumerable<ExceptionStack> ExceptionStacks { get; set; }

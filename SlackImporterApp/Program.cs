@@ -4,7 +4,6 @@ using System.IO;
 using BlobExporter;
 using BlobExporter.Models;
 using SlackImporter;
-using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -27,8 +26,19 @@ namespace SlackImporterApp
             {
                 foreach (var e in batch.ExceptionInfos)
                 {
-                    slackClient.PostMessage($"{e.EventTime.ToString("F")} UTC: {PrintStacks(e.ExceptionStacks)}");
-                    Console.WriteLine($"{e.EventTime.ToString("F")} UTC: {e.ExceptionStacks.First().Message}");
+                    var messageBuilder = new StringBuilder(e.EventTime.ToString("F"));
+                    messageBuilder.AppendLine(" UTC:");
+                    if (!string.IsNullOrWhiteSpace(e.Operation))
+                    {
+                        messageBuilder.Append("Operation: `");
+                        messageBuilder.Append(e.Operation);
+                        messageBuilder.AppendLine("`");
+                    }
+                    AppendStacks(messageBuilder, e.ExceptionStacks);
+
+                    var message = messageBuilder.ToString();
+                    slackClient.PostMessage(message);
+                    Console.WriteLine(message);
                 }
 
                 StoreOriginalBlobInfo(batch.OriginalBlobInfo);
@@ -40,14 +50,12 @@ namespace SlackImporterApp
             }
         }
 
-        private static string PrintStacks(IEnumerable<ExceptionStack> exceptionStacks)
+        private static void AppendStacks(StringBuilder messageBuilder, IEnumerable<ExceptionStack> exceptionStacks)
         {
-            var stacks = new StringBuilder();
             foreach (var e in exceptionStacks)
             {
-                stacks.AppendLine($"`{e.Message}` ```{e.StackTrace.ToFriendlyString()}```");
+                messageBuilder.AppendLine($"`{e.Message}` ```{e.StackTrace.ToFriendlyString()}```");
             }
-            return stacks.ToString();
         }
 
         private static void StoreOriginalBlobInfo(BlobInfo blobInfo)

@@ -18,6 +18,7 @@ namespace BlobExporter
 
             return new ExceptionInfo
             {
+                Operation = e.context.operation?.name,
                 EventTime = e.context.data.eventTime,
                 ExceptionStacks = stackTraces.Select(stack => new ExceptionStack
                 {

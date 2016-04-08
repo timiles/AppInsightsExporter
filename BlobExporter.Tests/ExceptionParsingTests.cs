@@ -18,6 +18,8 @@ namespace BlobExporter.Tests
 
             exceptionInfo.EventTime.Should().Be(DateTime.Parse("2016-03-27T21:09:45.3540931Z"));
 
+            exceptionInfo.Operation.Should().Be("GET TestError/Index");
+
             exceptionInfo.ExceptionStacks.Count().Should().Be(1);
             var exceptionStack = exceptionInfo.ExceptionStacks.Single();
             exceptionStack.Message.Should().Be("Test error");
